@@ -9,7 +9,7 @@
     // Här hämtar vi användarens data
     // print($_SESSION["user"]);
 
-    $profil = $_GET["user"];
+    $profil = test_input($_REQUEST["user"]);
  
     if ($profil) {
         $conn = create_conn(); // mysqli objektet skapas
@@ -17,11 +17,15 @@
         print("<br>" . $profil. "'s" . " profil" ."</br>");
 
 
-        $sql2 = "SELECT likes FROM users WHERE username='$profil'";
-        $result = $conn->query($sql2);
+        $sql2 = "SELECT likes FROM users WHERE username=?";
+        $stmt = $conn->prepare($sql2);
+        $stmt->bind_param("s",$profil);
+        $stmt->execute();
+        $result = $stmt->get_result();
+       
         $row = $result->fetch_assoc();
         $skr = $row['likes'];
-
+        
         
 
         print("<br>".  "Likes: " . $skr. "<br>");
@@ -48,19 +52,21 @@
         print("</form>");
 
           
-        $txt = $_POST['kommentar'];
+        $txt = test_input($_REQUEST['kommentar']);
 
 
         
         
         if(isset($_REQUEST['comm'])) {
 
-            $kom = "INSERT INTO `comments` (`id`, `comment`, `profile_id`) VALUES (NULL, '$txt', '$mo1')";
-
-            if (mysqli_query($conn, $kom)) {
-                print("Kommentar postad" . "<br>" );
-            } else {
-                print("Error");
+            
+            $statement = $conn->prepare("INSERT INTO `comments` (`comment`, `profile_id`) VALUES (?, ?)");
+            $statement->bind_param("ss", $txt, $mo1);
+            if ($statement->execute()) {    
+                print("Kommentar postad!");
+            }
+            else {
+                print("Problem!");
             }
         }
         
@@ -69,6 +75,11 @@
 
 
         $kommen = "SELECT comment FROM comments WHERE profile_id='$mo1'";
+
+
+
+
+        
         $result = $conn->query($kommen);
         if ($result->num_rows > 0) {
             
@@ -96,7 +107,7 @@
         }
 
       
-        // TODO: Kommentarsformuläret
+        
        
         //SELECT id, usernamne FROM users WHERE usernamne = $_REQUEST['user'];
         //SELECT comment FROM comments WHERE profile_id = $row['id'];
@@ -150,10 +161,15 @@
             
 
                 
+                $stmt = $conn->prepare( "UPDATE users SET realname=?, email=?, zipcode=?, bio=?, salary=?, preference=?, password=?  WHERE id=?");
+                $stmt->bind_param("ssisiisi", $realname, $email, $zip, $bio, $salary, $preference, $password, $id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+
                 
-                $sql2 = "UPDATE users SET realname='$realname', email='$email', zipcode='$zip', bio='$bio', salary='$salary', preference='$preference', password='$password'  WHERE id='$id'";
-                $sql4 = "DELETE FROM users WHERE id='$id'";
-                if (mysqli_query($conn, $sql2)) {
+                
+                if ($result) {
                     
                     
                 } else {
@@ -170,24 +186,27 @@
             
             if ($username != "" && $password != ""){
                 $pass = hash("Sha256", $password);
-                $sql = "SELECT * FROM users WHERE username='$username' and password='$pass'";
-                $result = mysqli_query($conn,$sql);
-                $row = mysqli_fetch_array($result);
+
+                $stmt = $conn->prepare("SELECT * FROM users WHERE username=? and password=?");
+                $stmt->bind_param("ss",$username, $pass);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+        
                 $count = mysqli_num_rows($result);
-                
                 if($count > 0){
                 
-                    $id = $_REQUEST["id"];
+                    $id = test_input($_REQUEST["id"]);
                     $sql4 = "DELETE FROM users WHERE id='$id'";
-                    
-                    if (mysqli_query($conn, $sql4)) {
-                        echo "Rip bro";
-                        
-                    } else{
-                        echo "Error $sql4. " . mysqli_error($link);       
-                    }
+
+                    $sql4 = $conn->prepare("DELETE FROM users WHERE id=?");
+                    $sql4->bind_param("i",$id);
+                    $sql4->execute();
+
+                    print("Deleted!");
+                
                 }else{
-                    echo "Fel lösenord!";
+                    print("Fel lösenord!");
                     
                 }
         
@@ -195,7 +214,6 @@
         }
         
 
-        // TODO: Skriv ut tidigare kommentarer på ens profil
         
     }
     
@@ -204,10 +222,7 @@
     
     else {
         print("Du försöker se på nån annans profil");
-        // TODO: Kommentarsformuläret
-        // För att hitta kommentarerna för en viss profil måste ni hitta idn för profilen
-        //SELECT id, usernamne FROM users WHERE usernamne = $_REQUEST['user'];
-        //SELECT comment FROM comments WHERE profile_id = $row['id'];
+
     }
 
 

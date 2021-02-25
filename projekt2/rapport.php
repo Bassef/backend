@@ -3,6 +3,8 @@
 
 
 <article>
+    <h1>Github </h1>
+    <a href="https://github.com/Bassef/backend/tree/main/projekt2"> Github</a>
     <h1>1. Databasen </h1>
     <p> Uppgiften gjordes till den största delen redan på timmen, ända saken som jag implementerade var likes kolumnen in till users. Users innehåller all information som behövs för en användare att registrera sig. Comment tabellen har en id(som har slutligen på vår sida ingen skillnad), en comment och en profile_id. Profile_id och users id är den kopplar tabellerna. Om man skriver en kommentar in på profilen så om users id och profile_id är samma så hör den ihop. Id på både comments och users är på Auto Increment. <img src="img/rx7.png" width="900" height="400" ><img src="img/Untitled.png"></p>
     <h1>2. Användarhantering​ </h1>

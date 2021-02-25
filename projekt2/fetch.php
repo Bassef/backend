@@ -1,9 +1,9 @@
 <?php
 // ALLA!!
 if (isset($_REQUEST['pref']) && isset($_REQUEST["like"]) && isset($_REQUEST["salary"])) {
-    $pref = ($_REQUEST["pref"]);
-    $like = ($_REQUEST["like"]);
-    $rika = ($_REQUEST["salary"]);
+    $pref = test_input($_REQUEST["pref"]);
+    $like = test_input($_REQUEST["like"]);
+    $rika = test_input($_REQUEST["salary"]);
     print("Pref, likes och lönen");
     
 
@@ -167,8 +167,8 @@ if (isset($_REQUEST['pref']) && isset($_REQUEST["like"]) && isset($_REQUEST["sal
 // Preference och populära!!
 
 else if (isset($_REQUEST['pref']) && isset($_REQUEST["like"])) {
-    $pref = ($_REQUEST["pref"]);
-    $like = ($_REQUEST["like"]);
+    $pref = test_input($_REQUEST["pref"]);
+    $like = test_input($_REQUEST["like"]);
     print("Pref och likes");
 
     if($pref == "male" && $like == "pop"){
@@ -236,8 +236,8 @@ else if (isset($_REQUEST['pref']) && isset($_REQUEST["like"])) {
 
 // Preference och lönen!!
 else if (isset($_REQUEST['pref']) && isset($_REQUEST["salary"])) {
-    $pref = ($_REQUEST["pref"]);
-    $rika = ($_REQUEST["salary"]);
+    $pref = test_input($_REQUEST["pref"]);
+    $rika = test_input($_REQUEST["salary"]);
     print("Pref och lön");
     
     if($pref == "male" && $rika == "rich"){
@@ -305,7 +305,7 @@ else if (isset($_REQUEST['pref']) && isset($_REQUEST["salary"])) {
 
 // Bara preferencen!!
 else if (isset($_REQUEST['pref'])) {
-    $pref = ($_REQUEST["pref"]);
+    $pref = test_input($_REQUEST["pref"]);
 
     print("Pref");
     

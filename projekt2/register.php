@@ -25,13 +25,21 @@ if (isset($_REQUEST["usr"]) && isset($_REQUEST["psw"])  ){
         $conn = create_conn();
         $username = test_input($_REQUEST["usr"]);
         $email = test_input($_REQUEST["mail"]); 
-        $sqlN = "SELECT * FROM users WHERE username='$username'";
-        $sqlE = "SELECT * FROM users WHERE email='$email'";
-        $moh = mysqli_query($conn, $sqlN);
-        $moh2 = mysqli_query($conn, $sqlE);
-        if (mysqli_num_rows($moh) > 0) {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username=?");
+        $stmt->bind_param("s",$username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        $stmt1 = $conn->prepare("SELECT * FROM users WHERE email=?");
+        $stmt1->bind_param("s",$email);
+        $stmt1->execute();
+        $result1 = $stmt1->get_result();
+        $row1 = $result1->fetch_assoc();
+        
+        if ($row['username'] == $username) {
             print("Användarnamn taget..."); 
-        }else if(mysqli_num_rows($moh2) > 0){
+        }else if($row1['email'] == $email) {
             print("Email taget..."); 	
         }else {
             // Hämta data från formulär

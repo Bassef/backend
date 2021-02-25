@@ -15,11 +15,17 @@ if (isset($_REQUEST["stage"]) && $_REQUEST["stage"] == "login") {
     
     if ($username != "" && $password != ""){
         $pass = test_input(hash("Sha256", $password));
-        $sql = "SELECT * FROM users WHERE username='$username' and password='$pass'";
-        $result = mysqli_query($conn,$sql);
-        $row = mysqli_fetch_array($result);
+
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username=? and password=?");
+        $stmt->bind_param("ss",$username, $pass);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
         $count = mysqli_num_rows($result);
+
+   
         
         if($count > 0){
             $_SESSION["user"] = $username;
